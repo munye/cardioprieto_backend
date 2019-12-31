@@ -1,10 +1,10 @@
 # ![RealWorld Example App](logo.png)
 
 
-[![Build Status](https://travis-ci.org/munye/golang-gin-starter-kit.svg?branch=master)](https://travis-ci.org/munye/golang-gin-starter-kit)
-[![codecov](https://codecov.io/gh/munye/golang-gin-starter-kit/branch/master/graph/badge.svg)](https://codecov.io/gh/munye/golang-gin-starter-kit)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/munye/golang-gin-starter-kit/blob/master/LICENSE)
-[![GoDoc](https://godoc.org/github.com/munye/golang-gin-starter-kit?status.svg)](https://godoc.org/github.com/munye/golang-gin-starter-kit)
+[![Build Status](https://travis-ci.org/munye/prueba_backend_go.svg?branch=master)](https://travis-ci.org/munye/prueba_backend_go)
+[![codecov](https://codecov.io/gh/munye/prueba_backend_go/branch/master/graph/badge.svg)](https://codecov.io/gh/munye/prueba_backend_go)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/munye/prueba_backend_go/blob/master/LICENSE)
+[![GoDoc](https://godoc.org/github.com/munye/prueba_backend_go?status.svg)](https://godoc.org/github.com/munye/prueba_backend_go)
 
 > ### Golang/Gin codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
 

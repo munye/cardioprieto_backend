@@ -1,7 +1,7 @@
 package users
 
 import (
-	"github.com/munye/golang-gin-starter-kit/common"
+	"github.com/munye/prueba_backend_go/common"
 	"gopkg.in/gin-gonic/gin.v1"
 )
 

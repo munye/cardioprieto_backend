@@ -5,13 +5,13 @@ go:
   - 1.8.x
   - master
 
-go_import_path: github.com/munye/golang-gin-starter-kit
+go_import_path: github.com/munye/prueba_backend_go
 
 services:
   - sqlite3
 
 install:
-  - go get -u github.com/munye/golang-gin-starter-kit
+  - go get -u github.com/munye/prueba_backend_go
   - go get -u github.com/kardianos/govendor
   - govendor sync
 script:
