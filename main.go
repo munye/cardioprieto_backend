@@ -2,10 +2,15 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/jinzhu/gorm"
+
+	"elmunyeco-realword-2-cardioprieto/simpli"
 	"github.com/munye/prueba_backend_go/articles"
 	"github.com/munye/prueba_backend_go/common"
 	"github.com/munye/prueba_backend_go/users"
@@ -13,6 +18,7 @@ import (
 
 func Migrate(db *gorm.DB) {
 	users.AutoMigrate()
+	db.AutoMigrate(&simpli.SimpliModel{})
 	db.AutoMigrate(&articles.ArticleModel{})
 	db.AutoMigrate(&articles.TagModel{})
 	db.AutoMigrate(&articles.FavoriteModel{})
@@ -22,6 +28,9 @@ func Migrate(db *gorm.DB) {
 
 func main() {
 
+	rand.Seed(time.Now().UTC().UnixNano())
+	numero := rand.Int()
+
 	db := common.Init()
 	Migrate(db)
 	defer db.Close()
@@ -30,6 +39,9 @@ func main() {
 
 	v1 := r.Group("/api")
 	users.UsersRegister(v1.Group("/users"))
+
+	simpli.SimpliAnonymousRegister(v1.Group("/simpli"))
+
 	v1.Use(users.AuthMiddleware(false))
 	articles.ArticlesAnonymousRegister(v1.Group("/articles"))
 	articles.TagsAnonymousRegister(v1.Group("/tags"))
@@ -51,14 +63,23 @@ func main() {
 	// test 1 to 1
 	tx1 := db.Begin()
 	userA := users.UserModel{
-		Username: "AAAAAAAAAAAAAAAA",
-		Email:    "aaaa@g.cn",
-		Bio:      "hehddeda",
+		Username: "user",
+		Email:    "user@gmail.com",
+		Bio:      "fisico nucliar viteh",
 		Image:    nil,
 	}
 	tx1.Save(&userA)
 	tx1.Commit()
 	fmt.Println(userA)
+
+	tx2 := db.Begin()
+	simpliA := simpli.SimpliModel{
+		Numero: numero,
+		Nombre: "El nombre del " + strconv.Itoa(numero),
+	}
+	tx2.Save(&simpliA)
+	tx2.Commit()
+	fmt.Println(simpliA)
 
 	//db.Save(&ArticleUserModel{
 	//    UserModelID:userA.ID,

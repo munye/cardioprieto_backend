@@ -4,32 +4,20 @@ import (
 	_ "fmt"
 	"github.com/jinzhu/gorm"
 	"github.com/munye/prueba_backend_go/common"
-	//	"github.com/wangzitian0/prueba_backend_go/users"
-	"strconv"
+	//	"strconv"
 )
 
 type SimpliModel struct {
 	gorm.Model
-	Numero string `gorm:primary_key"`
-	Nombre string
+	Numero int    `gorm:"column:numero;unique_index;not null"`
+	Nombre string `gorm:"column:nombre;not null"`
 }
 
-/*
- * Era GetArticleUserModel
- *
- * func GetSimpliModel(userModel users.UserModel, numero string) (SimpliModel, error) {
- * 	db := common.GetDB()
- * 	numero_int, err := strconv.Atoi(numero)
- * 	var simpli SimpliModel
- * 	db.Where("numero = ?", numero_int).First(&simpli)
- * 	return simpli, err
- * }
- */
-
-func GetSimpliModel(numero string) (SimpliModel, error) {
+func FindOneSimpli(condition interface{}) (SimpliModel, error) {
 	db := common.GetDB()
-	numero_int, err := strconv.Atoi(numero)
-	var simpli SimpliModel
-	db.Where("numero = ?", numero_int).First(&simpli)
-	return simpli, err
+	var model SimpliModel
+	tx := db.Begin()
+	tx.Where(condition).First(&model)
+	err := tx.Commit().Error
+	return model, err
 }
