@@ -9,4 +9,4 @@ serializers.go: definition the schema of return data
 
 validators.go: definition the validator of form data
 */
-package simpli
+package paciente

@@ -1,22 +1,22 @@
-package simpli
+package paciente
 
 import (
 	"github.com/gin-gonic/gin"
 )
 
-type SimpliResponse struct {
+type PacienteResponse struct {
 	ID     uint   `json:"-"`
 	Numero int    `json:"numero"`
 	Nombre string `json:"nombre"`
 }
 
-type SimpliSerializer struct {
+type PacienteSerializer struct {
 	C *gin.Context
-	SimpliModel
+	PacienteModel
 }
 
-func (s *SimpliSerializer) Response() SimpliResponse {
-	response := SimpliResponse{
+func (s *PacienteSerializer) Response() PacienteResponse {
+	response := PacienteResponse{
 		ID:     s.ID,
 		Numero: s.Numero,
 		Nombre: s.Nombre,

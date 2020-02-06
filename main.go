@@ -10,7 +10,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 
-	"elmunyeco-realword-2-cardioprieto/simpli"
+	"elmunyeco-realword-2-cardioprieto/paciente"
 	"github.com/munye/prueba_backend_go/articles"
 	"github.com/munye/prueba_backend_go/common"
 	"github.com/munye/prueba_backend_go/users"
@@ -22,8 +22,8 @@ func random(min int, max int) int {
 
 func Migrate(db *gorm.DB) {
 	users.AutoMigrate()
-	db.AutoMigrate(&simpli.SimpliModel{})
-	db.AutoMigrate(&simpli.SimpliRelatedModel{})
+	db.AutoMigrate(&paciente.PacienteModel{})
+	db.AutoMigrate(&paciente.EstudioModel{})
 	db.AutoMigrate(&articles.ArticleModel{})
 	db.AutoMigrate(&articles.TagModel{})
 	db.AutoMigrate(&articles.FavoriteModel{})
@@ -42,7 +42,7 @@ func main() {
 	v1 := r.Group("/api")
 	users.UsersRegister(v1.Group("/users"))
 
-	simpli.SimpliAnonymousRegister(v1.Group("/simpli"))
+	paciente.PacienteAnonymousRegister(v1.Group("/paciente"))
 
 	v1.Use(users.AuthMiddleware(false))
 	articles.ArticlesAnonymousRegister(v1.Group("/articles"))
@@ -79,25 +79,25 @@ func main() {
 		sID := random(1, 8000)
 
 		tx2 := db.Begin()
-		simpliA := simpli.SimpliModel{
+		pacienteA := paciente.PacienteModel{
 			Numero: sID,
 			Nombre: "El nombre del " + strconv.Itoa(sID),
 		}
-		tx2.Save(&simpliA)
+		tx2.Save(&pacienteA)
 		tx2.Commit()
-		fmt.Println(simpliA)
+		fmt.Println(pacienteA)
 
 		for n := 1; n <= 5; n++ {
 			srID := rand.Int()
 			tx3 := db.Begin()
-			simpliRelatedA := simpli.SimpliRelatedModel{
+			estudioA := paciente.EstudioModel{
 				Numero:   srID,
 				Nombre:   "El relacionado con " + strconv.Itoa(sID),
-				SimpliID: simpliA.Numero,
+				PacienteID: pacienteA.Numero,
 			}
-			tx3.Save(&simpliRelatedA)
+			tx3.Save(&estudioA)
 			tx3.Commit()
-			fmt.Println(simpliRelatedA)
+			fmt.Println(estudioA)
 		}
 
 		//db.Save(&ArticleUserModel{

@@ -1,4 +1,4 @@
-package simpli
+package paciente
 
 import (
 	//_ "fmt"
@@ -8,28 +8,28 @@ import (
 	//	"strconv"
 )
 
-type SimpliModel struct {
+type PacienteModel struct {
 	gorm.Model
 	Numero  int                `gorm:"column:numero;unique_index;not null"`
 	Nombre  string             `gorm:"column:nombre;not null"`
-	Related SimpliRelatedModel `gorm:ForeignKey:SimpliID`
+	Related EstudioModel `gorm:ForeignKey:PacienteID`
 }
 
-type SimpliRelatedModel struct {
+type EstudioModel struct {
 	gorm.Model
 	Numero   int    `gorm:"column:numero;unique_index;not null"`
 	Nombre   string `gorm:"column:nombre;not null"`
-	SimpliID int
+	PacienteID int
 }
 
-func FindOneSimpli(condition interface{}) (SimpliModel, error) {
+func FindOnePaciente(condition interface{}) (PacienteModel, error) {
 	db := common.GetDB()
-	var model SimpliModel
+	var model PacienteModel
 	tx := db.Begin()
-	fmt.Printf("FindOneSimpliCondition:   %v\n", condition)
+	fmt.Printf("FindOnePacienteCondition:   %v\n", condition)
 	tx.Where(condition).First(&model)
 	err := tx.Commit().Error
-	fmt.Printf("FindOneSimpliReturnModel:   %v\n", model)
+	fmt.Printf("FindOnePacienteReturnModel:   %v\n", model)
 	return model, err
 }
 
