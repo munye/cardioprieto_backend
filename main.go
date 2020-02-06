@@ -16,9 +16,14 @@ import (
 	"github.com/munye/prueba_backend_go/users"
 )
 
+func random(min int, max int) int {
+	return rand.Intn(max-min) + min
+}
+
 func Migrate(db *gorm.DB) {
 	users.AutoMigrate()
 	db.AutoMigrate(&simpli.SimpliModel{})
+	db.AutoMigrate(&simpli.SimpliRelatedModel{})
 	db.AutoMigrate(&articles.ArticleModel{})
 	db.AutoMigrate(&articles.TagModel{})
 	db.AutoMigrate(&articles.FavoriteModel{})
@@ -27,9 +32,6 @@ func Migrate(db *gorm.DB) {
 }
 
 func main() {
-
-	rand.Seed(time.Now().UTC().UnixNano())
-	numero := rand.Int()
 
 	db := common.Init()
 	Migrate(db)
@@ -72,23 +74,41 @@ func main() {
 	tx1.Commit()
 	fmt.Println(userA)
 
-	tx2 := db.Begin()
-	simpliA := simpli.SimpliModel{
-		Numero: numero,
-		Nombre: "El nombre del " + strconv.Itoa(numero),
-	}
-	tx2.Save(&simpliA)
-	tx2.Commit()
-	fmt.Println(simpliA)
+	for i := 1; i <= 1; i++ {
+		rand.Seed(time.Now().UnixNano())
+		sID := random(1, 8000)
 
-	//db.Save(&ArticleUserModel{
-	//    UserModelID:userA.ID,
-	//})
-	//var userAA ArticleUserModel
-	//db.Where(&ArticleUserModel{
-	//    UserModelID:userA.ID,
-	//}).First(&userAA)
-	//fmt.Println(userAA)
+		tx2 := db.Begin()
+		simpliA := simpli.SimpliModel{
+			Numero: sID,
+			Nombre: "El nombre del " + strconv.Itoa(sID),
+		}
+		tx2.Save(&simpliA)
+		tx2.Commit()
+		fmt.Println(simpliA)
+
+		for n := 1; n <= 5; n++ {
+			srID := rand.Int()
+			tx3 := db.Begin()
+			simpliRelatedA := simpli.SimpliRelatedModel{
+				Numero:   srID,
+				Nombre:   "El relacionado con " + strconv.Itoa(sID),
+				SimpliID: simpliA.Numero,
+			}
+			tx3.Save(&simpliRelatedA)
+			tx3.Commit()
+			fmt.Println(simpliRelatedA)
+		}
+
+		//db.Save(&ArticleUserModel{
+		//    UserModelID:userA.ID,
+		//})
+		//var userAA ArticleUserModel
+		//db.Where(&ArticleUserModel{
+		//    UserModelID:userA.ID,
+		//}).First(&userAA)
+		//fmt.Println(userAA)
+	}
 
 	r.Run() // listen and serve on 0.0.0.0:8080
 }

@@ -9,6 +9,7 @@ import (
 )
 
 func SimpliAnonymousRegister(router *gin.RouterGroup) {
+	router.POST("/", SimpliCreate)
 	router.GET("/:numero", SimpliRetrieve)
 }
 
@@ -19,9 +20,24 @@ func SimpliRetrieve(c *gin.Context) {
 	simpliModel, err := FindOneSimpli(&SimpliModel{Numero: numero_int})
 
 	if err != nil {
-		c.JSON(http.StatusNotFound, common.NewError("simplis", errors.New("Que te pario")))
+		c.JSON(http.StatusNotFound, common.NewError("simpli", errors.New("Que te pario")))
 		return
 	}
 	serializer := SimpliSerializer{c, simpliModel}
 	c.JSON(http.StatusOK, gin.H{"simpli": serializer.Response()})
+}
+
+func SimpliCreate(c *gin.Context) {
+	simpliModelValidator := NewSimpliModelValidator()
+	if err := simpliModelValidator.Bind(c); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, common.NewValidatorError(err))
+		return
+	}
+
+	if err := SaveOne(&simpliModelValidator.simpliModel); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, common.NewError("database", err))
+		return
+	}
+	serializer := SimpliSerializer{c, simpliModelValidator.simpliModel}
+	c.JSON(http.StatusCreated, gin.H{"simpli": serializer.Response()})
 }
