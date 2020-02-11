@@ -1,66 +1,65 @@
 package main
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
-// VisualElement that is drawn on the screen
-type VisualElement interface {
-	// Draw draws the visual element
-	Draw(drawer *Drawer) error
+// Estudio describes the behavior that needs to be exercised uniformly
+// across all primitive and composite objects.
+type Componente interface {
+	Traverse()
 }
 
-// Square represents a square
-type Square struct {
-	// Location of the square
-	Location Point
-	// Side size
-	Side float64
+// Campo describes a primitive leaf object in the hierarchy.
+type Campo struct {
+	Value int `json:valor`
 }
 
-// Draw draws a square
-func (square *Square) Draw(drawer *Drawer) error {
-	return drawer.DrawRect(Rect{
-		Location: square.Location,
-		Size: Size{
-			Height: square.Side,
-			Width:  square.Side,
-		},
-	})
-} // Circle represents a circle shape
-type Circle struct {
-	// Center of the circle
-	Center Point
-	// Radius of the circle
-	Radius float64
+// NewCampo creates a new leaf.
+func NewCampo(value int) *Campo {
+	return &Campo{Value: value}
 }
 
-// Draw draws a circle
-func (circle *Circle) Draw(drawer *Drawer) error {
-	rect := Rect{
-		Location: Point{
-			X: circle.Center.X - circle.Radius,
-			Y: circle.Center.Y - circle.Radius,
-		},
-		Size: Size{
-			Width:  2 * circle.Radius,
-			Height: 2 * circle.Radius,
-		},
-	}
-	return drawer.DrawEllipseInRect(rect)
-}
-
-type Layer struct {
-	// Elements of visual elements
-	Elements []VisualElement
-}
-
-// Draw draws a layer
-func (layer *Layer) Draw(drawer *Drawer) error {
-	for _, element := range layer.Elements {
-		if err := element.Draw(drawer); err != nil {
-			return err
-		}
-		fmt.Println()
+// Traverse prints the value of the leaf.
+func (c *Campo) Traverse() {
+	js, err := json.Marshal(c)
+	if err != nil {
+		fmt.Println(err)
 	}
 
-	return nil
+	fmt.Println(string(js))
+}
+
+// Estudio describes a composite of components.
+type Estudio struct {
+	campos []Componente `json:campos`
+}
+
+// NewEstudio creates a new composite.
+func NewEstudio() *Estudio {
+	return &Estudio{make([]Componente, 0)}
+}
+
+// Add adds a new component to the composite.
+func (e *Estudio) Add(componente Componente) {
+	e.campos = append(e.campos, componente)
+}
+
+// Traverse traverses the composites campos.
+func (e *Estudio) Traverse() {
+	for i := 0; i < len(e.campos); i++ {
+		e.campos[i].Traverse()
+	}
+}
+
+func main() {
+
+	estudio := NewEstudio()
+
+	for i := 10; i < 100; i++ {
+		estudio.Add(NewCampo(i))
+	}
+
+	estudio.Traverse()
 }
