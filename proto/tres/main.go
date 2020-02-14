@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 )
 
 // Estudio describes the behavior that needs to be exercised uniformly
@@ -13,11 +14,11 @@ type Componente interface {
 
 // Campo describes a primitive leaf object in the hierarchy.
 type Campo struct {
-	Value int `json:valor`
+	Value string `json:valor`
 }
 
 // NewCampo creates a new leaf.
-func NewCampo(value int) *Campo {
+func NewCampo(value string) *Campo {
 	return &Campo{Value: value}
 }
 
@@ -33,13 +34,13 @@ func (c *Campo) Traverse() {
 
 // Estudio describes a composite of components.
 type Estudio struct {
-	Title  string       `json:title`
-	Campos []Componente `json:campos`
+	PacienteID uint         `json:paciente_id`
+	Campos     []Componente `json:campos`
 }
 
 // NewEstudio creates a new composite.
-func NewEstudio() *Estudio {
-	return &Estudio{Title: "turulu", Campos: make([]Componente, 0)}
+func NewEstudio(pacienteID uint) *Estudio {
+	return &Estudio{PacienteID: pacienteID, Campos: make([]Componente, 0)}
 }
 
 // Add adds a new component to the composite.
@@ -58,10 +59,10 @@ func (e *Estudio) Traverse() {
 
 func main() {
 
-	estudio := NewEstudio()
+	estudio := NewEstudio(1)
 
 	for i := 0; i < 10; i++ {
-		estudio.Add(NewCampo(i))
+		estudio.Add(NewCampo(strconv.Itoa(i)))
 	}
 
 	estudio.Traverse()
