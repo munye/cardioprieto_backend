@@ -7,7 +7,7 @@ vendor/*
 !vendor/vendor.json
 
 tmp/*
-gorm.db
+*.db
 coverage.txt
 
 bak.*

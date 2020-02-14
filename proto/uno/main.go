@@ -3,6 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"os"
+	//"github.com/munye/prueba_backend_go/common"
 	"strconv"
 )
 
@@ -14,7 +18,9 @@ type Componente interface {
 
 // Campo describes a primitive leaf object in the hierarchy.
 type Campo struct {
-	Value string `json:valor`
+	gorm.Model `json:"campo"`
+	EstudioID  uint
+	Value      string `gorm:"column:value" json:"valor"`
 }
 
 // NewCampo creates a new leaf.
@@ -34,8 +40,9 @@ func (c *Campo) Traverse() {
 
 // Estudio describes a composite of components.
 type Estudio struct {
-	PacienteID uint         `json:paciente_id`
-	Campos     []Componente `json:campos`
+	gorm.Model `json:"estudio"`
+	PacienteID uint         `json:"paciente_id"`
+	Campos     []Componente `gorm:"type:Campos" json:"campos"`
 }
 
 // NewEstudio creates a new composite.
@@ -57,13 +64,29 @@ func (e *Estudio) Traverse() {
 	fmt.Println(string(js))
 }
 
+func initialMigration(db *gorm.DB) {
+	db.AutoMigrate(&Estudio{})
+	db.AutoMigrate(&Campo{})
+}
+
 func main() {
+
+	os.Remove("sqlite3gorm.db")
+	db, err := gorm.Open("sqlite3", "sqlite3gorm.db")
+	if err != nil {
+		fmt.Println(err.Error())
+		panic("fallo la conexión. a la concha de tu madre")
+	}
+	defer db.Close()
+	initialMigration(db)
 
 	estudio := NewEstudio(1)
 
 	for i := 0; i < 10; i++ {
 		estudio.Add(NewCampo(strconv.Itoa(i)))
+		//db.Create(&Campo{Value: strconv.Itoa(i)})
 	}
+	db.Create(estudio)
 
 	estudio.Traverse()
 
