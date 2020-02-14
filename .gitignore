@@ -11,3 +11,4 @@ gorm.db
 coverage.txt
 
 bak.*
+*/main
